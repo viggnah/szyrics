@@ -46,6 +46,8 @@ class Fullscreen(Gtk.Window):
 
         # The fullscreen window
         Gtk.Window.__init__(self)
+        # Referenced in CSS
+        self.set_name("syncly-fullscreen-window")
         # If the window is closed in any event, 'delete_event' method is called
         self.connect("delete_event", self.delete_event)
         # For specific keyboard key presses
@@ -148,7 +150,9 @@ class Fullscreen(Gtk.Window):
         self.overlay = Gtk.Overlay()
         # To make image clickable put it inside an eventbox
         self.event_box = Gtk.EventBox()
+        self.event_box.set_name("event-box")
         self.album_widget = Gtk.Image()
+        self.album_widget.set_name("album-art")
         # Overlay
         # |-- Eventbox (connected to signals) 
         #    |-- Image
@@ -161,6 +165,7 @@ class Fullscreen(Gtk.Window):
 
         # Create a TextView for displaying lyrics
         self.textview = Gtk.TextView()
+        self.textview.set_name("syncly-lyrics-textview")
         self.textview.set_editable(False)
         self.textview.set_cursor_visible(False)
         self.textview.set_left_margin(10)
@@ -209,6 +214,7 @@ class Fullscreen(Gtk.Window):
         print("image clicked")
         # self.player.props.playing cannot say if playing or paused
         if self.player.get_playing_source():
+            self.album_widget.set_opacity(0.5)
             if self.player.get_playing()[1]:
                 self.remove_pause_circle(self.pause_circle, None)
                 self.player.pause()
@@ -249,6 +255,7 @@ class Fullscreen(Gtk.Window):
     def add_pause_circle(self, widget, event):
         # Play/pause check needed for "enter_notify_event"
         if self.player.get_playing_source():
+            self.album_widget.set_opacity(0.5)
             if self.player.get_playing()[1]:
                 self.overlay.add_overlay(self.pause_circle)
                 # Click passes through the image to the Eventbox
@@ -258,16 +265,18 @@ class Fullscreen(Gtk.Window):
                 self.pause_circle_exists = False
 
     def remove_pause_circle(self, widget, event):
+        self.album_widget.set_opacity(1)
         if self.pause_circle_exists:
             self.overlay.remove(self.pause_circle)
             self.pause_circle_exists = False
         
     def gtk_style(self):
         css = b"""
-        GtkWindow {
-            background: #050709;
+        #syncly-fullscreen-window {
+            background-size: 25px 25px;
+            background-image: linear-gradient(45deg, grey 1px, #050709 1px), linear-gradient(135deg, grey 1px, #050709 1px);
         }
-        GtkTextView {
+        #lyrics-textviesyncly-w {
             background: transparent;
             font-family: Helvetica;
             font-size: 18px;
@@ -306,7 +315,6 @@ class Fullscreen(Gtk.Window):
 
         self.album_widget.set_from_pixbuf(self.albumPixbuf)
         self.album_widget.show_all()
-
 
     def reload_lyrics(self, player, entry):
         entry = self.player.get_playing_entry()

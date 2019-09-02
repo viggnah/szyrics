@@ -92,7 +92,7 @@ def get_lyrics_from_cache(path):
 def show_lyrics(textbuffer, tag, tags, artist, title, lyrics):
     if lyrics == "":
         print("no lyrics found")
-        lyrics = _("No lyrics found")
+        lyrics = _("No lyrics found. Add lyrics through the drop-down menu in the sidebar")
         tags = None
     else:
         lyrics, tags = Util.parse_lrc(lyrics)

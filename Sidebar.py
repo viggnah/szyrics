@@ -76,7 +76,8 @@ class Sidebar(Gtk.Grid):
 
     def show_sidebar(self):
         # If sidebar is chosen from the settings and the plugin is activated this method is called
-        # Search lyrics if already playing (this will be the case if user reactivates plugin during playback)
+        # Search lyrics if already playing (this will be the case if user reactivates plugin during playback)        
+        self.gtk_style()
         if self.first and self.player.props.playing:
             self.search_lyrics(self.player, self.player.get_playing_entry())
         elif not self.first:
@@ -109,6 +110,8 @@ class Sidebar(Gtk.Grid):
 
         # Put the TextView inside a ScrollView
         self.sw = Gtk.ScrolledWindow()
+        # Name for adding CSS
+        self.textview.set_name("syncly-sidebar")
         self.sw.set_hexpand(True)
         self.sw.set_vexpand(True)
         self.sw.add(self.textview)
@@ -145,10 +148,27 @@ class Sidebar(Gtk.Grid):
         # Sidebar is made, but not visible
         self.visible = False
 
+    def gtk_style(self):
+        css = b"""
+        #syncly-sidebar {
+            background-size: 25px 25px;
+            background-image: linear-gradient(45deg, grey 1px, #050709 1px), linear-gradient(135deg, grey 1px, #050709 1px);
+        }
+        """
+        self.style_provider = Gtk.CssProvider()
+        self.style_provider.load_from_data(css)
+
+        # Must remove while exiting otherwise applies for the rhythmbox player as well
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            self.style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
     def create_menu(self):
         menu = Gtk.Menu()
         self.add_menu_item(menu, _("Add LRC file"), self.add_lrc_file)
-        menu.append(Gtk.SeparatorMenuItem())
+        # menu.append(Gtk.SeparatorMenuItem())
         self.add_menu_item(menu, _("Preferences"), self.show_preferences_dialog)
         menu.show_all()
 
@@ -279,6 +299,13 @@ class Sidebar(Gtk.Grid):
         self.pec_id = self.player.connect('elapsed-nano-changed', Util.elapsed_changed, self.current_tag, self.sync_tag, self.tags, self.textbuffer, self.textview)
 
     def disconnect_sb_signals(self):
+        # Remove the styling applied for the sidebar
+        try:
+            Gtk.StyleContext.remove_provider_for_screen(
+            Gdk.Screen.get_default(),
+            self.style_provider)
+        except:
+            pass
         # Remove the sidebar and disconnect from both signals
         if self.visible:
             self.shell.remove_widget(self, self.position)
