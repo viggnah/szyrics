@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema path="/org/gnome/rhythmbox/plugins/syncly/" id="org.gnome.rhythmbox.plugins.syncly">
+    <schema path="/org/gnome/rhythmbox/plugins/szyrics/" id="org.gnome.rhythmbox.plugins.szyrics">
         <key type="b" name="use-window">
             <default>true</default>
             <summary>Use fullscreen mode instead of sidebar</summary>

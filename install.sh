@@ -55,8 +55,8 @@ RB=${RB:=false}
 
 SCRIPT_NAME=`basename "$0"`
 SCRIPT_PATH=${0%`basename "$0"`}
-PLUGIN_PATH="${HOME}/.local/share/rhythmbox/plugins/syncly/"
-GLIB_SCHEME="org.gnome.rhythmbox.plugins.syncly.gschema.xml"
+PLUGIN_PATH="${HOME}/.local/share/rhythmbox/plugins/szyrics/"
+GLIB_SCHEME="org.gnome.rhythmbox.plugins.szyrics.gschema.xml"
 SCHEMA_FOLDER="schema/"
 GLIB_DIR="/usr/share/glib-2.0/schemas/"
 
@@ -83,8 +83,8 @@ then
 
 else
 echo "Installing plugin globally"
-    PLUGIN_PATH="/usr/lib/rhythmbox/plugins/syncly/"
-    DATA_PATH="/usr/share/rhythmbox/plugins/syncly/"
+    PLUGIN_PATH="/usr/lib/rhythmbox/plugins/szyrics/"
+    DATA_PATH="/usr/share/rhythmbox/plugins/szyrics/"
 
     #remove old dirs
     sudo rm -r -f $PLUGIN_PATH
@@ -96,7 +96,7 @@ echo "Installing plugin globally"
     
     #copy the files
     sudo cp "${SCRIPT_PATH}"*.py "$PLUGIN_PATH"
-    sudo cp "${SCRIPT_PATH}"syncly.plugin "$PLUGIN_PATH"syncly.plugin
+    sudo cp "${SCRIPT_PATH}"szyrics.plugin "$PLUGIN_PATH"szyrics.plugin
 
     sudo cp -r "${SCRIPT_PATH}"ui "$DATA_PATH"
     sudo cp -r "${SCRIPT_PATH}"img "$DATA_PATH"

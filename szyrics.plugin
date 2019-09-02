@@ -1,8 +1,8 @@
 [Plugin]
 Loader=python3
-Module=syncly
+Module=szyrics
 IAge=2
 Depends=rb
-Name=syncly
+Name=szyrics
 Description=Displays synchronized lyrics in the sidebar or go fullscreen
 Authors=viggnah <viggnahasd@gmail.com>

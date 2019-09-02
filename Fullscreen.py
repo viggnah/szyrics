@@ -25,13 +25,13 @@ from gi.repository import RB
 
 import rb  # @UnresolvedImport
 from CairoWidgets import FullscreenEntryButton
-from synclyPrefs import GSetting
+from szyricsPrefs import GSetting
 import Util
 
 import os
 import mimetypes
 
-from syncly_rb3compat import url2pathname
+from szyrics_rb3compat import url2pathname
 
 class Fullscreen(Gtk.Window):
     # Scales the prefetched album art for later use
@@ -47,7 +47,7 @@ class Fullscreen(Gtk.Window):
         # The fullscreen window
         Gtk.Window.__init__(self)
         # Referenced in CSS
-        self.set_name("syncly-fullscreen-window")
+        self.set_name("szyrics-fullscreen-window")
         # If the window is closed in any event, 'delete_event' method is called
         self.connect("delete_event", self.delete_event)
         # For specific keyboard key presses
@@ -78,7 +78,7 @@ class Fullscreen(Gtk.Window):
 
         # If no album art is available, the default image
         self.no_artwork = GdkPixbuf.Pixbuf.new_from_file_at_size(
-            rb.find_plugin_file(self.backend, "img/rhythmbox-missing-artwork.svg"),
+            rb.find_plugin_file(self.backend, "img/missing-artwork.svg"),
             self._albumCoverWidth,
             self._albumCoverHeight
         )
@@ -165,7 +165,7 @@ class Fullscreen(Gtk.Window):
 
         # Create a TextView for displaying lyrics
         self.textview = Gtk.TextView()
-        self.textview.set_name("syncly-lyrics-textview")
+        self.textview.set_name("szyrics-lyrics-textview")
         self.textview.set_editable(False)
         self.textview.set_cursor_visible(False)
         self.textview.set_left_margin(10)
@@ -272,11 +272,11 @@ class Fullscreen(Gtk.Window):
         
     def gtk_style(self):
         css = b"""
-        #syncly-fullscreen-window {
+        #szyrics-fullscreen-window {
             background-size: 25px 25px;
             background-image: linear-gradient(45deg, grey 1px, #050709 1px), linear-gradient(135deg, grey 1px, #050709 1px);
         }
-        #lyrics-textviesyncly-w {
+        #szyrics-lyrics-textview {
             background: transparent;
             font-family: Helvetica;
             font-size: 18px;

@@ -25,7 +25,7 @@ from gi.repository import PeasGtk  # @UnresolvedImport
 
 import rb  # @UnresolvedImport
 
-SCHEMA_PATH = 'org.gnome.rhythmbox.plugins.syncly'
+SCHEMA_PATH = 'org.gnome.rhythmbox.plugins.szyrics'
 GLIB_DIR = "/usr/share/glib-2.0/schemas/"
 
 
@@ -49,8 +49,8 @@ class GSetting:
             if not source.lookup(SCHEMA_PATH, True):
                 print("Trying to run a gksudo to get the schema installed")
                 os.system(
-                    'gksudo --message "Syncly needs to install a glib xml schema for saving preferences. Please type in your admin password. Afterwards, restart Rhythmbox." cp "%s" "%s"' % (
-                        rb.find_plugin_file(self, "org.gnome.rhythmbox.plugins.syncly.gschema.xml"),
+                    'gksudo --message "Szyrics needs to install a glib xml schema for saving preferences. Please type in your admin password. Afterwards, restart Rhythmbox." cp "%s" "%s"' % (
+                        rb.find_plugin_file(self, "org.gnome.rhythmbox.plugins.szyrics.gschema.xml"),
                         GLIB_DIR)
                 )
                 os.system('gksudo --message "Compiling new glib schemas" glib-compile-schemas "%s"' % GLIB_DIR)
@@ -116,7 +116,7 @@ class Preferences(GObject.Object, PeasGtk.Configurable):
     Preferences for the Fullscreen Plugin. It holds the settings for
     the plugin and also is the responsible of creating the preferences dialog.
     '''
-    __gtype_name__ = 'SynclyPreferences'
+    __gtype_name__ = 'SzyricsPreferences'
     object = GObject.property(type=GObject.Object)  # @ReservedAssignment
 
     def __init__(self):
@@ -135,7 +135,7 @@ class Preferences(GObject.Object, PeasGtk.Configurable):
         # create the ui
         builder = Gtk.Builder()
         builder.add_from_file(
-            rb.find_plugin_file(self, 'ui/syncly_prefs.ui')
+            rb.find_plugin_file(self, 'ui/szyrics_prefs.ui')
         )
         builder.connect_signals(self)
 

@@ -41,17 +41,17 @@ from gi.repository import Gio
 import Util
 import Fullscreen
 import Sidebar
-from syncly_rb3compat import url2pathname
-from syncly_rb3compat import ActionGroup
-from syncly_rb3compat import ApplicationShell
-from synclyPrefs import GSetting
-from synclyPrefs import Preferences
+from szyrics_rb3compat import url2pathname
+from szyrics_rb3compat import ActionGroup
+from szyrics_rb3compat import ApplicationShell
+from szyricsPrefs import GSetting
+from szyricsPrefs import Preferences
 
 view_menu_ui = """
 <ui>
     <menubar name="MenuBar">
         <menu name="ViewMenu" action="View">
-            <menuitem name="syncly" action="ToggleSynchronisedLyricSideBar" />
+            <menuitem name="szyrics" action="ToggleSynchronisedLyricSideBar" />
         </menu>
     </menubar>
 </ui>
@@ -62,33 +62,33 @@ context_ui = """
 <ui>
     <popup name="BrowserSourceViewPopup">
         <placeholder name="PluginPlaceholder">
-            <menuitem name="synclyPopup" action="synclyPopupAction"/>
+            <menuitem name="szyricsPopup" action="szyricsPopupAction"/>
         </placeholder>
       </popup>
  
     <popup name="PlaylistViewPopup">
         <placeholder name="PluginPlaceholder">
-            <menuitem name="synclyPopup" action="synclyPopupAction"/>
+            <menuitem name="szyricsPopup" action="szyricsPopupAction"/>
         </placeholder>
     </popup>
  
     <popup name="QueuePlaylistViewPopup">
         <placeholder name="PluginPlaceholder">
-            <menuitem name="synclyPopup" action="synclyPopupAction"/>
+            <menuitem name="szyricsPopup" action="szyricsPopupAction"/>
         </placeholder>
     </popup>
      
     <popup name="PodcastViewPopup">
         <placeholder name="PluginPlaceholder">
-            <menuitem name="synclyPopup" action="synclyPopupAction"/>
+            <menuitem name="szyricsPopup" action="szyricsPopupAction"/>
         </placeholder>
     </popup>
 </ui>
 """
 
 # Basic part for every plugin
-class syncly(GObject.Object, Peas.Activatable):
-    __gtype_name__ = 'syncly'
+class szyrics(GObject.Object, Peas.Activatable):
+    __gtype_name__ = 'szyrics'
     object = GObject.property(type=GObject.Object)
 
     # Scales the prefetched album art for later use
@@ -127,7 +127,7 @@ class syncly(GObject.Object, Peas.Activatable):
         self.window = None
         self.sidebar = Sidebar.Sidebar(self.toggle_action_group, plugin=self)
 
-        print("activated plugin syncly")
+        print("activated plugin szyrics")
 
     def do_deactivate(self):
         # Disconnect all signals, sidebar and window
@@ -165,11 +165,11 @@ class syncly(GObject.Object, Peas.Activatable):
 
         self.shell = None
 
-        print("deactivated plugin syncly")
+        print("deactivated plugin szyrics")
 
     def init_menu(self):
         # Add actions to the Menubar and Right click list
-        self.toggle_action_group = ActionGroup(self.shell, 'synclyPluginToggleActions')
+        self.toggle_action_group = ActionGroup(self.shell, 'szyricsPluginToggleActions')
         self.toggle_action_group.add_action(func=self.sidebar_or_fullscreen,
                                             action_name='ToggleSynchronisedLyricSideBar', 
                                             label=_("Synchronised Lyrics"),
@@ -179,9 +179,9 @@ class syncly(GObject.Object, Peas.Activatable):
                                             tooltip=_("Display synchronised lyrics for the current playing song"))
         self.appshell.insert_action_group(self.toggle_action_group)
 
-        # self.context_action_group = ActionGroup(self.shell, 'synclyPluginPopupActions')
+        # self.context_action_group = ActionGroup(self.shell, 'szyricsPluginPopupActions')
         # self.context_action_group.add_action(func=self.context_action_callback,
-        #                                      action_name="synclyPopupAction", 
+        #                                      action_name="szyricsPopupAction", 
         #                                      label=_("Synchronised lyrics"),
         #                                      tooltip=_("Display synchronised lyrics for this song"))
         # self.appshell.insert_action_group(self.context_action_group)
@@ -189,8 +189,8 @@ class syncly(GObject.Object, Peas.Activatable):
         self.insert_ui()
 
     def insert_ui(self):
-        self.appshell.add_app_menuitems(view_menu_ui, 'synclyPluginToggleActions', 'view')
-        # self.appshell.add_browser_menuitems(context_ui, 'synclyPluginPopupActions')
+        self.appshell.add_app_menuitems(view_menu_ui, 'szyricsPluginToggleActions', 'view')
+        # self.appshell.add_browser_menuitems(context_ui, 'szyricsPluginPopupActions')
 
     def get_user_preferences(self, settings, key, gs):
         # The only preference option given

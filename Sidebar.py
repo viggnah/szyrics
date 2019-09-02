@@ -26,10 +26,10 @@ from gi.repository import Gio
 
 import rb  # @UnresolvedImport
 from CairoWidgets import FullscreenEntryButton
-from synclyPrefs import GSetting
-from synclyPrefs import Preferences
+from szyricsPrefs import GSetting
+from szyricsPrefs import Preferences
 import Util
-from syncly_rb3compat import ActionGroup
+from szyrics_rb3compat import ActionGroup
 
 import os
 import shutil
@@ -111,7 +111,7 @@ class Sidebar(Gtk.Grid):
         # Put the TextView inside a ScrollView
         self.sw = Gtk.ScrolledWindow()
         # Name for adding CSS
-        self.textview.set_name("syncly-sidebar")
+        self.textview.set_name("szyrics-sidebar")
         self.sw.set_hexpand(True)
         self.sw.set_vexpand(True)
         self.sw.add(self.textview)
@@ -150,7 +150,7 @@ class Sidebar(Gtk.Grid):
 
     def gtk_style(self):
         css = b"""
-        #syncly-sidebar {
+        #szyrics-sidebar {
             background-size: 25px 25px;
             background-image: linear-gradient(45deg, grey 1px, #050709 1px), linear-gradient(135deg, grey 1px, #050709 1px);
         }
@@ -216,7 +216,7 @@ class Sidebar(Gtk.Grid):
     def show_preferences_dialog(self, action):
         content = Preferences().do_create_configure_widget()
 
-        dialog = Gtk.Dialog(_('syncly Preferences'), self.shell.get_property('window'),
+        dialog = Gtk.Dialog(_('szyrics Preferences'), self.shell.get_property('window'),
                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                             (Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
