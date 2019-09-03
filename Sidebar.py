@@ -263,9 +263,7 @@ class Sidebar(Gtk.Grid):
             self.tags = None
             self.current_tag = None
             start, end = self.textbuffer.get_bounds()
-            print(self.textbuffer.get_tag_table().get_size())
             self.textbuffer.remove_tag(self.sync_tag, start, end)
-            print(self.textbuffer.get_tag_table().get_size())
 
         # There is nothing playing, return
         if entry is None:
@@ -308,7 +306,41 @@ class Sidebar(Gtk.Grid):
         # Show lyrics in the textbuffer, common for both window and sidebar
         self.lyrics, self.tags = Util.show_lyrics(self.textbuffer, self.tag, self.tags, self.artist, self.title, Util.get_lyrics_from_cache(self.path))
         # Connect to elapsed-changed signal to handle synchronized lyrics, common for both sidebar and window. Only tag and sync_tag different
-        self.pec_id = self.player.connect('elapsed-nano-changed', Util.elapsed_changed, self.current_tag, self.sync_tag, self.tags, self.textbuffer, self.textview)
+        self.pec_id = self.player.connect('elapsed-nano-changed', self.elapsed_changed)
+
+    # Highlight text according to the time stamp (tags variable)
+    def elapsed_changed(self, player, seconds):
+        # Not an LRC file, so no tags
+        if self.tags is None:
+            return
+
+        self.matching_tag = None
+        for tag in self.tags:
+            time, _ = tag
+            # Iterate through all time stamps (ascending order) and find the one with time stamp just less than the song's current playing time
+            if time > seconds:
+                break
+            self.matching_tag = tag
+
+        # No tag, or same as previous tag (song has not adavanced enough to highlight next line, or ended)
+        if self.matching_tag is None or self.current_tag == self.matching_tag:
+            return
+
+        # Assign the new tag to current_tag variable
+        self.current_tag = self.matching_tag
+
+        # Remove old tag
+        start, end = self.textbuffer.get_bounds()
+        self.textbuffer.remove_tag(self.sync_tag, start, end)
+
+        # Highlight next line
+        line = self.tags.index(self.current_tag) + 1
+        start = self.textbuffer.get_iter_at_line(line)
+        end = start.copy()
+        end.forward_to_line_end()
+        self.textbuffer.apply_tag(self.sync_tag, start, end)
+        # Scroll if necessary
+        self.textview.scroll_to_iter(start, 0, True, 0.5, 0.5)
 
     def disconnect_sb_signals(self):
         # Remove the styling applied for the sidebar
