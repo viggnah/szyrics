@@ -25,7 +25,6 @@ from gi.repository import RB
 from gi.repository import Gio
 
 import rb  # @UnresolvedImport
-from CairoWidgets import FullscreenEntryButton
 from szyricsPrefs import GSetting
 from szyricsPrefs import Preferences
 import Util
@@ -62,6 +61,7 @@ class Sidebar(Gtk.Grid):
 
         # Initialise here, displays in file chooser dialog
         self.title = None
+        self.artist = None
         # Must exist for file selected in chooser dialog to be copied
         self.path = None
         
@@ -102,8 +102,6 @@ class Sidebar(Gtk.Grid):
         drop_down.add(image)
         drop_down.set_halign(Gtk.Align.END)
         drop_down.set_valign(Gtk.Align.START)
-        drop_down.set_margin_end(1)
-        drop_down.set_margin_top(1)
 
         menu = self.create_menu()
         drop_down.set_popup(menu)
@@ -169,15 +167,23 @@ class Sidebar(Gtk.Grid):
         menu = Gtk.Menu()
         self.add_menu_item(menu, _("Add LRC file"), self.add_lrc_file)
         # menu.append(Gtk.SeparatorMenuItem())
-        self.add_menu_item(menu, _("Preferences"), self.show_preferences_dialog)
+        # self.add_menu_item(menu, _("Preferences"), self.show_preferences_dialog)
+        # Choose the option of going fullscreen in the sidebar drop-down
+        self.add_menu_item(menu, _("Fullscreen"), self.update_preferences, "check_item")
         menu.show_all()
 
         return menu
 
-    def add_menu_item(self, menu, label, callback):
-        item = Gtk.MenuItem(label)
-        item.connect("activate", callback)
-        menu.append(item)
+    def add_menu_item(self, menu, label, callback, check_item=None):
+        if check_item is None:
+            item = Gtk.MenuItem(label)
+            item.connect("activate", callback)
+            menu.append(item)
+        else:
+            item = Gtk.CheckMenuItem.new_with_label(label)
+            item.set_active(False)
+            item.connect("toggled", callback)
+            menu.append(item)
 
     def add_lrc_file(self, action):
         error_msg = ""
@@ -205,9 +211,9 @@ class Sidebar(Gtk.Grid):
             error_msg = "Please make sure the song you want to add lyrics for is playing."
 
         if error_msg != "":
-            error_dialog = Gtk.MessageDialog(_('Error'), self.shell.get_property('window'),
+            error_dialog = Gtk.MessageDialog(self.shell.get_property('window'),
                                              Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                                             Gtk.MessageType.WARNING, Gtk.ButtonsType.OK,
+                                             Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
                                              error_msg)
             error_dialog.show_all()
             error_dialog.run()
@@ -226,6 +232,12 @@ class Sidebar(Gtk.Grid):
         dialog.show_all()
         dialog.run()
         dialog.hide()
+
+    def update_preferences(self, check_item):
+        # Update the settings variable to the switch's state
+        gs = GSetting()
+        settings = gs.get_setting(gs.Path.PLUGIN)
+        settings[gs.PluginKey.USE_WINDOW] = check_item.get_active()
 
     def toggle_visibility(self, action, param=None, data=None):
         # Check if plugin is activated in the view menu bar

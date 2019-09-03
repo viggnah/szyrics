@@ -22,6 +22,7 @@ from gi.repository import Gdk  # @UnresolvedImport
 from gi.repository import GdkPixbuf  # @UnresolvedImport
 from gi.repository import Pango
 from gi.repository import RB
+from gi.repository import Gio
 
 import rb  # @UnresolvedImport
 from CairoWidgets import FullscreenEntryButton
@@ -29,6 +30,7 @@ from szyricsPrefs import GSetting
 import Util
 
 import os
+import shutil
 import mimetypes
 
 from szyrics_rb3compat import url2pathname
@@ -96,6 +98,12 @@ class Fullscreen(Gtk.Window):
         # Show and go fullscreen
         self.show_all()
         self.fullscreen()
+
+        # Initialise here, displays in file chooser dialog
+        self.title = None
+        self.artist = None
+        # Must exist for file selected in chooser dialog to be copied
+        self.path = None
 
         self.pause_circle_exists = False
         # Used for synchronized lyrics
@@ -175,6 +183,19 @@ class Fullscreen(Gtk.Window):
         self.textview.set_wrap_mode(Gtk.WrapMode.WORD)
         self.textview.set_justification(Gtk.Justification.CENTER)
 
+        # Overlay for scrolled window and drop-down
+        overlay_sw = Gtk.Overlay()
+        # Menu shown with some options
+        drop_down = Gtk.MenuButton()
+        icon = Gio.ThemedIcon(name="open-menu-symbolic")
+        image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON)
+        drop_down.add(image)
+        drop_down.set_halign(Gtk.Align.END)
+        drop_down.set_valign(Gtk.Align.END)
+
+        menu = self.create_menu()
+        drop_down.set_popup(menu)
+
         # Put the TextView inside a ScrollView
         sw = Gtk.ScrolledWindow()
         sw.set_hexpand(True) # important
@@ -189,9 +210,13 @@ class Fullscreen(Gtk.Window):
         self.textbuffer = Gtk.TextBuffer()
         self.textview.set_buffer(self.textbuffer)
 
+        # Pack the scrolled window and drop-down together
+        overlay_sw.add(sw)
+        overlay_sw.add_overlay(drop_down)
+
         # Attach the Overlay and ScrolledWindow to the grid
         self.grid.add(self.overlay)
-        self.grid.attach_next_to(sw, self.overlay, Gtk.PositionType.RIGHT, 1, 1)
+        self.grid.attach_next_to(overlay_sw, self.overlay, Gtk.PositionType.RIGHT, 1, 1)
 
         # # Overlay for background image of window
         # main_overlay = Gtk.Overlay()
@@ -208,6 +233,68 @@ class Fullscreen(Gtk.Window):
         # main_overlay.add_overlay(self.grid)
         # Now add everything to the window
         self.add(self.grid)
+
+    def create_menu(self):
+        menu = Gtk.Menu()
+        self.add_menu_item(menu, _("Add LRC file"), self.add_lrc_file)
+        # menu.append(Gtk.SeparatorMenuItem())
+        # self.add_menu_item(menu, _("Preferences"), self.show_preferences_dialog)
+        # Choose the option of going fullscreen in the sidebar drop-down
+        self.add_menu_item(menu, _("Fullscreen"), self.update_preferences, "check_item")
+        menu.show_all()
+
+        return menu
+
+    def add_menu_item(self, menu, label, callback, check_item=None):
+        if check_item is None:
+            item = Gtk.MenuItem(label)
+            item.connect("activate", callback)
+            menu.append(item)
+        else:
+            item = Gtk.CheckMenuItem.new_with_label(label)
+            item.set_active(True)
+            item.connect("toggled", callback)
+            menu.append(item)
+
+    def add_lrc_file(self, action):
+        error_msg = ""
+        if self.artist and self.title and self.path:
+            chooser_title = "Looking for lyrics to \"" + self.title + "\" by \"" + self.artist + "\""
+            file_chooser = Gtk.FileChooserDialog(chooser_title, self,
+                                                 action=Gtk.FileChooserAction.OPEN,
+                                                 buttons=(_("_Cancel"), Gtk.ResponseType.CANCEL,
+                                                 _("_Add"), Gtk.ResponseType.ACCEPT))
+            file_chooser.set_select_multiple(False)
+            res = file_chooser.run()
+
+            if res == Gtk.ResponseType.ACCEPT:
+                src = file_chooser.get_filename()
+                # filename = os.path.basename(src)
+                # if filename != (self.title + '.lrc'):
+                #     return
+                shutil.copy2(src, self.path)
+            elif res != Gtk.ResponseType.CANCEL:
+                error_msg = "Oops! Something went wrong whilst adding the file."
+
+            file_chooser.destroy()
+            self.reload_lyrics(self.player, self.player.get_playing_entry())
+        else:
+            error_msg = "Please make sure the song you want to add lyrics for is playing."
+
+        if error_msg != "":
+            error_dialog = Gtk.MessageDialog(self,
+                                             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                             Gtk.MessageType.INFO, Gtk.ButtonsType.OK,
+                                             error_msg)
+            error_dialog.show_all()
+            error_dialog.run()
+            error_dialog.hide()
+
+    def update_preferences(self, check_item):
+        # Update the settings variable to the switch's state
+        gs = GSetting()
+        settings = gs.get_setting(gs.Path.PLUGIN)
+        settings[gs.PluginKey.USE_WINDOW] = check_item.get_active()
 
     def image_click_playpause(self, widget=None, event=None):
         # self.player.get_playing() -> returns (True, playing=True/False). https://developer.gnome.org/rhythmbox/unstable/RBShellPlayer.html#rb-shell-player-get-playing
