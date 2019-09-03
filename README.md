@@ -17,9 +17,9 @@ Sidebar view within the rhythmbox player
 - Easily activate with the keyboard shortcut `CTRL + SHIFT + L`
 
 ## Installation
-1. Click "Clone or Download" then "Download ZIP"
-2. Extract and open terminal in the folder
-3. Run `./install.sh` on terminal
+1. Click "Clone or Download" near the top of this page, then click "Download ZIP"
+2. Extract this zip file and open a terminal in the extracted folder
+3. Run `./install.sh` on the terminal
 4. Activate the plugin in rhythmbox
 
 ## Credits
