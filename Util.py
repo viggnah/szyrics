@@ -110,7 +110,7 @@ def get_lyrics_from_cache(path):
 def show_lyrics(textbuffer, tag, tags, artist, title, lyrics):
     if lyrics == "":
         print("no lyrics found")
-        lyrics = _("No lyrics found. Add lyrics through the drop-down menu in the sidebar")
+        lyrics = _("No lyrics found. Add lyrics through the drop-down menu.")
         tags = None
     else:
         lyrics, tags = Util.parse_lrc(lyrics)
@@ -123,7 +123,7 @@ def show_lyrics(textbuffer, tag, tags, artist, title, lyrics):
     end.forward_to_line_end()
     textbuffer.apply_tag(tag, start, end)
 
-    return lyrics, tags
+    return lyrics, tags, textbuffer
 
 # Highlight text according to the time stamp (tags variable)
 def elapsed_changed(player, seconds, current_tag, sync_tag, tags, textbuffer, textview):

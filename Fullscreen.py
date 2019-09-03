@@ -436,7 +436,7 @@ class Fullscreen(Gtk.Window):
         # Set cover art
         self.set_cover_art(entry)
         # Show lyrics
-        self.lyrics, self.tags = Util.show_lyrics(self.textbuffer, self.tag, self.tags, self.artist, self.title, Util.get_lyrics_from_cache(self.path))
+        self.lyrics, self.tags, self.textbuffer = Util.show_lyrics(self.textbuffer, self.tag, self.tags, self.artist, self.title, Util.get_lyrics_from_cache(self.path))
 
         # Connect to elapsed-changed signal to handle synchronized lyrics
         self.fec_id = self.player.connect('elapsed-nano-changed', self.elapsed_changed)

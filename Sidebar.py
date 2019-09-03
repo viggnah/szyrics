@@ -304,7 +304,7 @@ class Sidebar(Gtk.Grid):
         print(self.path)
 
         # Show lyrics in the textbuffer, common for both window and sidebar
-        self.lyrics, self.tags = Util.show_lyrics(self.textbuffer, self.tag, self.tags, self.artist, self.title, Util.get_lyrics_from_cache(self.path))
+        self.lyrics, self.tags, self.textbuffer = Util.show_lyrics(self.textbuffer, self.tag, self.tags, self.artist, self.title, Util.get_lyrics_from_cache(self.path))
         # Connect to elapsed-changed signal to handle synchronized lyrics, common for both sidebar and window. Only tag and sync_tag different
         self.pec_id = self.player.connect('elapsed-nano-changed', self.elapsed_changed)
 
