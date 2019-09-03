@@ -16,5 +16,11 @@ Sidebar view within the rhythmbox player
 - Toggle between fullscreen and sidebar modes using the drop-down menu
 - Easily activate with the keyboard shortcut `CTRL + SHIFT + L`
 
+## Installation
+1. Click "Clone or Download" then "Download ZIP"
+2. Extract and open terminal in the folder
+3. Run `./install.sh` on terminal
+4. Activate the plugin in rhythmbox
+
 ## Credits
 Mostly inspired by [lLyrics](https://github.com/dmo60/lLyrics) (an amazing plugin for lyrics).
