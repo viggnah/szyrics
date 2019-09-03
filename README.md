@@ -12,8 +12,8 @@ Sidebar view within the rhythmbox player
 - Show synchronized lyrics fullscreen with album art for distraction free viewing
 - Pause and play by clicking on the album art
 - Show synchronized lyrics in a sidebar of the rhythmbox player
-- Add a lyric file (.lrc file) easily using the drop-down menu in the sidebar
-- Toggle between fullscreen and sidebar views using the plugin settings
+- Add a lyric file (.lrc file) easily using the drop-down menu in both modes
+- Toggle between fullscreen and sidebar modes using the drop-down menu
 - Easily activate with the keyboard shortcut `CTRL + SHIFT + L`
 
 ## Credits
