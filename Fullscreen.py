@@ -25,7 +25,6 @@ from gi.repository import RB
 from gi.repository import Gio
 
 import rb  # @UnresolvedImport
-from CairoWidgets import FullscreenEntryButton
 from szyricsPrefs import GSetting
 import Util
 
