@@ -39,7 +39,7 @@ except:
 
 # Splits the LRC file into time stamp tags and lyrics
 def parse_lrc(data):
-    tag_regex = "(\[\d+\:\d+\.\d*])"
+    tag_regex = r"(\[\d+\:\d+\.\d*])"
     match = re.search(tag_regex, data)
 
     # Not an LRC file
